@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA URL Wrapper</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>PWA URL Wrapper</h1>
+        <p>将任何网址封装成PWA项目</p>
+        
+        <form id="pwaForm">
+            <div class="form-group">
+                <label for="url">网址</label>
+                <input type="url" id="url" required placeholder="例如: https://www.doubao.com/chat/36767892034944258">
+            </div>
+            
+            <div class="form-group">
+                <label for="name">项目名称</label>
+                <input type="text" id="name" required placeholder="例如: Doubao Chat">
+            </div>
+            
+            <div class="form-group">
+                <label for="iconFile">选择图标文件</label>
+                <input type="file" id="iconFile" name="iconFile" accept="image/*" onchange="handleFileUpload(event)">
+                <p class="help-text">或使用解析到的图标（点击图标选择）</p>
+            </div>
+            
+            <button type="submit">生成PWA项目</button>
+        </form>
+        
+        <div id="result" class="result">
+            <!-- 结果将显示在这里 -->
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

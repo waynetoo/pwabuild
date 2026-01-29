@@ -1,0 +1,27 @@
+{
+  "name": "pwa-url-wrapper",
+  "version": "1.0.0",
+  "description": "A tool to wrap any URL into a PWA project",
+  "main": "script.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "pwa",
+    "url-wrapper",
+    "web-app"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "dependencies": {
+    "axios": "^1.13.4",
+    "cheerio": "^1.2.0",
+    "express": "^5.2.1",
+    "multer": "^2.0.2",
+    "sharp": "^0.34.5"
+  }
+}
