@@ -18,7 +18,14 @@ const app = express();
 const port = 3000;
 
 // 静态文件服务
-app.use(express.static(__dirname));
+app.use(express.static(__dirname, {
+    setHeaders: function(res, path) {
+        // 为HTML文件设置X-Frame-Options头
+        if (path.endsWith('.html')) {
+            res.setHeader('X-Frame-Options', 'sameorigin');
+        }
+    }
+}));
 
 // 解析JSON请求体
 app.use(express.json({ limit: '10mb' }));

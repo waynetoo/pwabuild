@@ -44,6 +44,8 @@ async function main() {
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icons/icon-512x512.png" type="image/png">
     <meta name="theme-color" content="#ffffff">
+    <!-- 防止点击劫持，限制iframe嵌套 -->
+    <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self'">
     <style>
         * {
             margin: 0;
