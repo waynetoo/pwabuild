@@ -242,6 +242,39 @@ self.addEventListener('fetch', (event) => {
                     return;
                 }
                 
+                // 检查是否为.ico格式
+                const isIcoFormat = iconSource.endsWith('.ico') || (
+                    iconSource.startsWith('http://') || iconSource.startsWith('https://')
+                ) && iconSource.includes('.ico');
+                
+                if (isIcoFormat) {
+                    console.log('检测到.ico格式图标，尝试转换为支持的格式');
+                    // 对于.ico格式，我们可以尝试使用一个简单的方法：
+                    // 1. 保存.ico文件到临时位置
+                    // 2. 使用一个简单的方法来提取其中的图像
+                    // 3. 或者使用默认图标（如果转换失败）
+                    
+                    try {
+                        // 尝试使用sharp处理，如果失败则使用默认图标
+                        console.log('尝试使用sharp处理.ico格式');
+                        await sharp(imageBuffer)
+                            .resize(512, 512, {
+                                fit: 'cover',
+                                withoutEnlargement: false
+                            })
+                            .toFile(outputPath);
+                        console.log(`图标已处理并保存到: ${outputPath}`);
+                        return;
+                    } catch (icoError) {
+                        console.error('处理.ico格式失败:', icoError);
+                        // 失败时使用默认图标
+                        console.log('使用默认图标替代.ico格式');
+                        const iconPlaceholder = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', 'base64');
+                        fs.writeFileSync(outputPath, iconPlaceholder);
+                        return;
+                    }
+                }
+                
                 // 调整图标尺寸为512x512
                 console.log('正在调整图标尺寸为512x512');
                 await sharp(imageBuffer)

@@ -2,6 +2,10 @@
 document.getElementById('url').addEventListener('input', function(e) {
     const url = e.target.value;
     if (url) {
+        // 重置选择的图标状态
+        window.selectedIcon = null;
+        window.selectedIconFile = null;
+        
         fetch(`/get-title?url=${encodeURIComponent(url)}`)
             .then(response => {
                 if (!response.ok) {
@@ -26,8 +30,25 @@ document.getElementById('url').addEventListener('input', function(e) {
     }
 });
 
+// 检查图标质量
+function checkIconQuality(iconUrl) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = function() {
+            // 不过滤过小的图标，只过滤加载失败的图标
+            console.log(`图标尺寸: ${iconUrl} (${this.width}x${this.height})`);
+            resolve(true);
+        };
+        img.onerror = function() {
+            console.log(`过滤掉无效的图标: ${iconUrl}`);
+            resolve(false);
+        };
+        img.src = iconUrl;
+    });
+}
+
 // 显示解析的图标
-function displayIcons(icons) {
+async function displayIcons(icons) {
     const iconsContainer = document.getElementById('iconsContainer');
     if (!iconsContainer) {
         const container = document.createElement('div');
@@ -46,7 +67,21 @@ function displayIcons(icons) {
     iconsList.style.justifyContent = 'center';
     iconsList.style.flexWrap = 'wrap';
     
-    icons.forEach((icon, index) => {
+    // 过滤掉质量差的图标
+    const validIcons = [];
+    for (const icon of icons) {
+        const isQuality = await checkIconQuality(icon);
+        if (isQuality) {
+            validIcons.push(icon);
+        }
+    }
+    
+    if (validIcons.length === 0) {
+        iconsList.innerHTML = '<p>未找到有效的图标，请上传本地图标</p>';
+        return;
+    }
+    
+    validIcons.forEach((icon, index) => {
         const iconItem = document.createElement('div');
         iconItem.className = 'icon-item';
         iconItem.style.margin = '10px';
@@ -55,6 +90,7 @@ function displayIcons(icons) {
         // 移除选择按钮，通过点击图片选择
         iconItem.innerHTML = `
             <img src="${icon}" alt="Icon ${index + 1}" style="width: 64px; height: 64px; margin: 5px;">
+            <p style="font-size: 12px; margin: 5px 0;">Icon ${index + 1}</p>
         `;
         // 添加点击事件
         iconItem.addEventListener('click', () => selectIcon(icon));
@@ -62,8 +98,8 @@ function displayIcons(icons) {
     });
     
     // 自动选择第一个图标
-    if (icons.length > 0) {
-        selectIcon(icons[0]);
+    if (validIcons.length > 0) {
+        selectIcon(validIcons[0]);
     }
 }
 
@@ -150,6 +186,17 @@ document.getElementById('pwaForm').addEventListener('submit', function(e) {
     const url = document.getElementById('url').value;
     const name = document.getElementById('name').value;
     
+    // 验证项目名称和图标
+    if (!name) {
+        alert('请输入项目名称');
+        return;
+    }
+    
+    if (!window.selectedIcon && !window.selectedIconFile) {
+        alert('请选择或上传图标');
+        return;
+    }
+    
     generatePWAProject(url, name);
 });
 
@@ -204,7 +251,7 @@ function generatePWAProject(url, name) {
         });
     } else {
         // 使用JSON发送普通请求
-        const icon = window.selectedIcon || 'default';
+        const icon = window.selectedIcon;
         
         fetch('/generate-pwa', {
             method: 'POST',
