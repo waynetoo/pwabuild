@@ -4,10 +4,10 @@ const CACHE_NAME = `pwa-cache-${CACHE_VERSION}`;
 
 // 需要缓存的资源
 const STATIC_ASSETS = [
-    '/',
-    '/index.html',
-    '/manifest.json',
-    '/icons/icon-512x512.png'
+    './',
+    './index.html',
+    './manifest.json',
+    './icons/icon-512x512.png'
 ];
 
 // 安装事件：缓存基本资源
@@ -46,7 +46,7 @@ self.addEventListener('fetch', (event) => {
     const url = new URL(request.url);
     
     // 对静态资源使用缓存优先策略
-    if (STATIC_ASSETS.includes(url.pathname) || url.pathname.startsWith('/icons/')) {
+    if (STATIC_ASSETS.includes(url.pathname) || url.pathname.startsWith('./icons/')) {
         event.respondWith(
             caches.match(request).then((response) => {
                 return response || fetch(request).then((networkResponse) => {
@@ -60,10 +60,10 @@ self.addEventListener('fetch', (event) => {
                     return networkResponse;
                 }).catch(() => {
                     // 网络请求失败时，返回离线页面或默认图标
-                    if (url.pathname.startsWith('/icons/')) {
-                        return caches.match('/icons/icon-512x512.png');
+                    if (url.pathname.startsWith('./icons/')) {
+                        return caches.match('./icons/icon-512x512.png');
                     }
-                    return caches.match('/index.html');
+                    return caches.match('./index.html');
                 });
             })
         );
@@ -75,7 +75,7 @@ self.addEventListener('fetch', (event) => {
             }).catch(() => {
                 // 网络请求失败时，尝试从缓存获取
                 return caches.match(request).then((cachedResponse) => {
-                    return cachedResponse || caches.match('/index.html');
+                    return cachedResponse || caches.match('./index.html');
                 });
             })
         );
@@ -94,8 +94,8 @@ self.addEventListener('fetch', (event) => {
 //     const data = event.data.json();
 //     const options = {
 //         body: data.body,
-//         icon: '/icons/icon-512x512.png',
-//         badge: '/icons/icon-512x512.png'
+//         icon: './icons/icon-512x512.png',
+//         badge: './icons/icon-512x512.png'
 //     };
 //     event.waitUntil(
 //         self.registration.showNotification(data.title, options)

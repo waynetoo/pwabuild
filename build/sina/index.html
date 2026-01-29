@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>原始传奇</title>
+    <title>sina</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icons/icon-512x512.png" type="image/png">
     <meta name="theme-color" content="#ffffff">
@@ -17,22 +17,33 @@
         body, html {
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            overflow: auto;
+            margin: 0;
+            padding: 0;
         }
         
         iframe {
             width: 100%;
             height: 100vh;
+            min-height: 100vh;
             border: none;
+            overflow: auto;
+            display: block;
         }
     </style>
 </head>
 <body>
-    <iframe src="https://play.lenovo.com.cn/zt/212253.html?plf=wfjy1" title="原始传奇"></iframe>
+    <iframe src="https://sina.cn/" title="sina"></iframe>
     <script>
-        if ('serviceWorker' in navigator) {
+        // 注册Service Worker（仅在http/https协议下）
+        if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/service-worker.js')
+                // 动态获取Service Worker路径，根据当前URL路径计算
+                const currentPath = window.location.pathname;
+                const serviceWorkerPath = currentPath.endsWith('/') ? currentPath + 'service-worker.js' : currentPath.substring(0, currentPath.lastIndexOf('/') + 1) + 'service-worker.js';
+                
+                console.log('Registering ServiceWorker at:', serviceWorkerPath);
+                navigator.serviceWorker.register(serviceWorkerPath)
                     .then(function(registration) {
                         console.log('ServiceWorker registration successful with scope: ', registration.scope);
                     })
@@ -40,6 +51,8 @@
                         console.log('ServiceWorker registration failed: ', error);
                     });
             });
+        } else if (window.location.protocol === 'file:') {
+            console.log('File protocol detected, skipping ServiceWorker registration');
         }
     </script>
 </body>

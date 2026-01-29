@@ -1,7 +1,7 @@
 {
-  "name": "WINBD-Test",
-  "short_name": "WINBD-Test",
-  "description": "PWA wrapper for WINBD-Test",
+  "name": "sina",
+  "short_name": "sina",
+  "description": "PWA wrapper for sina",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
